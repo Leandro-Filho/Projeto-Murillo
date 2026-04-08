@@ -3,5 +3,5 @@
 /.venv
 .env
 
-.text
-.db
+dados.db
+dados.db-shm
