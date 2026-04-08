@@ -1,0 +1,4 @@
+PORTA_SERIAL = '/dev/ttyACM0'
+BAUD_RATE = 9600
+URL_API = 'http://127.0.0.1:5000/leituras'
+MODO_SIMULACAO = True
