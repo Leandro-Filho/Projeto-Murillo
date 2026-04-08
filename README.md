@@ -87,3 +87,7 @@ python src/serial_reader.py
 ```
 
 Este script ficará rodando em loop, lendo os dados da porta serial (ou gerando simulações) e enviando para a API via método POST a cada 5 segundos.
+
+## Como Ver o Vídeo da Aplicação?
+
+Acesse por aqui -> Clique Aqui[xxxxxx]
