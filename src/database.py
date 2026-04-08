@@ -1,5 +1,6 @@
 # src/database.py
 import sqlite3
+import os
 
 def get_db_connection():
     """Cria a conexão com o banco e ativa o modo WAL para concorrência."""
@@ -12,7 +13,7 @@ def get_db_connection():
 def init_db():
     """Cria as tabelas se não existirem (executa o schema.sql)."""
     conn = get_db_connection()
-    with open('schema.sql', 'r') as f:
+    with open('src/schema.sql', 'r') as f:
         conn.executescript(f.read())
     conn.commit()
     conn.close()
