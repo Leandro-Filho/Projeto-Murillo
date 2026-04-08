@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Histórico - Estação IoT</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="/">Estação IoT</a>
+            <div class="navbar-nav">
+                <a class="nav-link" href="/">Painel</a>
+                <a class="nav-link active" href="/leituras">Histórico</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2 class="mb-4">Histórico Completo de Leituras</h2>
+        
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped align-middle">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Data e Hora</th>
+                                <th>Temperatura (°C)</th>
+                                <th>Umidade (%)</th>
+                                <th>Pressão (hPa)</th>
+                                <th>Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for leitura in leituras %}
+                            <tr>
+                                <td>{{ leitura.id }}</td>
+                                <td>{{ leitura.timestamp }}</td>
+                                <td><span class="badge bg-danger">{{ leitura.temperatura }}</span></td>
+                                <td><span class="badge bg-info text-dark">{{ leitura.umidade }}</span></td>
+                                <td><span class="badge bg-secondary">{{ leitura.pressao }}</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="deletarLeitura({{ leitura.id }})">
+                                        Excluir
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function deletarLeitura(id) {
+            if (confirm("Você tem certeza que deseja excluir a leitura ID " + id + "?")) {
+                fetch('/leituras/' + id, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'deletado') {
+                        // Recarrega a página para atualizar a tabela
+                        window.location.reload();
+                    } else {
+                        alert("Erro ao excluir: " + data.erro);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    alert("Ocorreu um erro ao tentar conectar com a API.");
+                });
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estação Meteorológica IoT</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="/">Estação IoT</a>
+            <div class="navbar-nav">
+                <a class="nav-link active" href="/">Painel</a>
+                <a class="nav-link" href="/leituras">Histórico</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2 class="mb-4">Monitoramento em Tempo Real</h2>
+        
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card text-white bg-danger mb-3 shadow-sm">
+                    <div class="card-header">Temperatura Atual</div>
+                    <div class="card-body">
+                        <h2 class="card-title">{{ leituras[0]['temperatura'] if leituras else '--' }} °C</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-info mb-3 shadow-sm">
+                    <div class="card-header">Umidade Atual</div>
+                    <div class="card-body">
+                        <h2 class="card-title">{{ leituras[0]['umidade'] if leituras else '--' }} %</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-secondary mb-3 shadow-sm">
+                    <div class="card-header">Pressão Atual</div>
+                    <div class="card-body">
+                        <h2 class="card-title">{{ leituras[0]['pressao'] if leituras else '--' }} hPa</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <canvas id="graficoLeituras" height="80"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // O Flask injeta os dados do banco diretamente no JavaScript (em formato JSON)
+        // Usamos .reverse() para o gráfico ir do mais antigo para o mais novo (da esquerda para a direita)
+        const dadosFlask = {{ leituras | tojson }}.reverse();
+        
+        // Separando os dados para o gráfico
+        const labels = dadosFlask.map(d => {
+            let data = new Date(d.timestamp);
+            return data.toLocaleTimeString('pt-BR'); 
+        });
+        const temperaturas = dadosFlask.map(d => d.temperatura);
+        const umidades = dadosFlask.map(d => d.umidade);
+
+        // Configurando o Chart.js
+        const ctx = document.getElementById('graficoLeituras').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Temperatura (°C)',
+                        data: temperaturas,
+                        borderColor: '#dc3545', // Vermelho do Bootstrap
+                        backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.3 // Deixa a linha curvada suavemente
+                    },
+                    {
+                        label: 'Umidade (%)',
+                        data: umidades,
+                        borderColor: '#0dcaf0', // Azul do Bootstrap
+                        backgroundColor: 'rgba(13, 202, 240, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.3
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: { display: true, text: 'Variação Temporal (Últimas Leituras)' }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
