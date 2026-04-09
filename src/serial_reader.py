@@ -9,9 +9,9 @@ from config import PORTA_SERIAL, BAUD_RATE, URL_API, MODO_SIMULACAO
 def ler_dados_simulados():
     """Gera dados aleatórios para testar o sistema sem o hardware físico."""
     return {
-        "temperatura": round(random.uniform(20.0, 35.0), 1),
-        "umidade": round(random.uniform(40.0, 80.0), 1),
-        "pressao": round(random.uniform(1000.0, 1020.0), 1)
+        "temperatura": round(random.uniform(20.0, 21.5), 1),
+        "umidade": round(random.uniform(76.0, 80.0), 1),
+        "pressao": round(random.uniform(1020.0, 1037.0), 1)
     }
 
 def iniciar_leitor():
